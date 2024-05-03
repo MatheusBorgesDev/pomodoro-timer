@@ -13,5 +13,6 @@ export const ButtonRender = styled.button<ButtonRenderProps>`
   border: 0;
   margin: 8px;
 
-  background: ${(props) => props.theme.white};
+  background: ${(props) => props.theme["green-500"]};
+  color: ${(props) => props.theme.white};
 `;
