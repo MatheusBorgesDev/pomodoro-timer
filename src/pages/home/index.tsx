@@ -27,6 +27,8 @@ interface Cycle {
 interface CyclesContextType {
   activeCycle: Cycle | undefined;
   activeCycleId: string | null;
+  amountSecondsPassed: number;
+  setSecondsPassed: (seconds: number) => void;
   markCurrentCycleAsFinished: () => void;
 }
 
@@ -45,6 +47,7 @@ type newCycleFormData = z.infer<typeof newCycleFormSchema>;
 export function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
 
   const newCycleForm = useForm<newCycleFormData>({
     resolver: zodResolver(newCycleFormSchema),
@@ -61,6 +64,22 @@ export function Home() {
   const task = watch("task");
   const isSubmitDisabled = !task;
 
+  function setSecondsPassed(seconds: number) {
+    setAmountSecondsPassed(seconds);
+  }
+
+  function markCurrentCycleAsFinished() {
+    setCycles((state) =>
+      state.map((cycle) => {
+        if (cycle.id == activeCycleId) {
+          return { ...cycle, finishedDate: new Date() };
+        } else {
+          return cycle;
+        }
+      })
+    );
+  }
+
   function handleCreateNewCycle(data: newCycleFormData) {
     const newCycle: Cycle = {
       id: String(new Date().getTime()),
@@ -75,18 +94,6 @@ export function Home() {
     setAmountSecondsPassed(0);
 
     reset();
-  }
-
-  function markCurrentCycleAsFinished() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id == activeCycleId) {
-          return { ...cycle, finishedDate: new Date() };
-        } else {
-          return cycle;
-        }
-      })
-    );
   }
 
   function handleInterruptCycle() {
@@ -107,7 +114,13 @@ export function Home() {
     <HomeRender>
       <form onSubmit={handleSubmit(handleCreateNewCycle)}>
         <CyclesContext.Provider
-          value={{ activeCycle, activeCycleId, markCurrentCycleAsFinished }}
+          value={{
+            activeCycle,
+            activeCycleId,
+            amountSecondsPassed,
+            setSecondsPassed,
+            markCurrentCycleAsFinished,
+          }}
         >
           <FormProvider {...newCycleForm}>
             <NewCycleForm />
