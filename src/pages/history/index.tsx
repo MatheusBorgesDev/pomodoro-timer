@@ -1,6 +1,11 @@
+import { useContext } from "react";
+
 import { HistoryList, HistoryRender, Status } from "./styles";
+import { CyclesContext } from "../../contexts/cyclesContext";
 
 export function History() {
+  const { cycles } = useContext(CyclesContext);
+
   return (
     <HistoryRender>
       <h1>Meu histórico</h1>

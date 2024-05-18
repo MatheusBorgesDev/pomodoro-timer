@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
-import { CyclesContext } from "../..";
+
+import { CyclesContext } from "../../../../contexts/cyclesContext";
 
 import { differenceInSeconds } from "date-fns";
 
