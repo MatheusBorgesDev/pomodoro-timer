@@ -1,4 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
+
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 import { HandPalm, Play } from "@phosphor-icons/react";
 
@@ -23,14 +27,34 @@ interface Cycle {
 interface CyclesContextType {
   activeCycle: Cycle | undefined;
   activeCycleId: string | null;
-  markCurrentCycleAsFinished: () => void
+  markCurrentCycleAsFinished: () => void;
 }
 
 export const CyclesContext = createContext({} as CyclesContextType);
 
+const newCycleFormSchema = z.object({
+  task: z.string().min(1, "Informe a tarefa"),
+  minutesAmount: z
+    .number()
+    .min(5, { message: "O ciclo precisa ser de no mínimo 5 minutos" })
+    .max(60, { message: "O ciclo precisa ser de no máximo 60 minutos" }),
+});
+
+type newCycleFormData = z.infer<typeof newCycleFormSchema>;
+
 export function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+
+  const newCycleForm = useForm<newCycleFormData>({
+    resolver: zodResolver(newCycleFormSchema),
+    defaultValues: {
+      task: "",
+      minutesAmount: 0,
+    },
+  });
+
+  const { handleSubmit, watch, reset } = newCycleForm;
 
   const activeCycle = cycles.find((cycle) => cycle.id == activeCycleId);
 
@@ -53,7 +77,7 @@ export function Home() {
     reset();
   }
 
-  function markCurrentCycleAsFinished(){
+  function markCurrentCycleAsFinished() {
     setCycles((state) =>
       state.map((cycle) => {
         if (cycle.id == activeCycleId) {
@@ -62,6 +86,7 @@ export function Home() {
           return cycle;
         }
       })
+    );
   }
 
   function handleInterruptCycle() {
@@ -81,8 +106,13 @@ export function Home() {
   return (
     <HomeRender>
       <form onSubmit={handleSubmit(handleCreateNewCycle)}>
-        <CyclesContext.Provider value={{ activeCycle, activeCycleId, markCurrentCycleAsFinished }}>
-          <NewCycleForm />
+        <CyclesContext.Provider
+          value={{ activeCycle, activeCycleId, markCurrentCycleAsFinished }}
+        >
+          <FormProvider {...newCycleForm}>
+            <NewCycleForm />
+          </FormProvider>
+
           <Countdown />
         </CyclesContext.Provider>
 
