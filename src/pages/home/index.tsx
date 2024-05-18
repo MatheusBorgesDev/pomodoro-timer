@@ -35,6 +35,7 @@ interface Cycle {
   minutesAmount: number;
   startDate: Date;
   interruptedDate?: Date;
+  finishedDate?: Date;
 }
 
 export function Home() {
@@ -52,21 +53,17 @@ export function Home() {
 
   const activeCycle = cycles.find((cycle) => cycle.id == activeCycleId);
 
-  useEffect(() => {
-    let interval: number;
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0;
 
-    if (activeCycle) {
-      interval = setInterval(() => {
-        setAmountSecondsPassed(
-          differenceInSeconds(new Date(), activeCycle.startDate)
-        );
-      }, 1000);
-    }
+  const minutesAmount = Math.floor(currentSeconds / 60);
+  const secondsAmount = currentSeconds % 60;
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [activeCycle]);
+  const minutes = String(minutesAmount).padStart(2, "0");
+  const seconds = String(secondsAmount).padStart(2, "0");
+
+  const task = watch("task");
+  const isSubmitDisabled = !task;
 
   function handleCreateNewCycle(data: newCycleFormData) {
     const newCycle: Cycle = {
@@ -85,8 +82,8 @@ export function Home() {
   }
 
   function handleInterruptCycle() {
-    setCycles(
-      cycles.map((cycle) => {
+    setCycles((state) =>
+      state.map((cycle) => {
         if (cycle.id == activeCycleId) {
           return { ...cycle, interruptedDate: new Date() };
         } else {
@@ -98,25 +95,46 @@ export function Home() {
     setActiveCycleId(null);
   }
 
-  console.log(activeCycle);
+  useEffect(() => {
+    let interval: number;
 
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
-  const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0;
+    if (activeCycle) {
+      interval = setInterval(() => {
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate
+        );
 
-  const minutesAmount = Math.floor(currentSeconds / 60);
-  const secondsAmount = currentSeconds % 60;
+        if (secondsDifference >= totalSeconds) {
+          setCycles((state) =>
+            state.map((cycle) => {
+              if (cycle.id == activeCycleId) {
+                return { ...cycle, finishedDate: new Date() };
+              } else {
+                return cycle;
+              }
+            })
+          );
 
-  const minutes = String(minutesAmount).padStart(2, "0");
-  const seconds = String(secondsAmount).padStart(2, "0");
+          setAmountSecondsPassed(totalSeconds);
+
+          clearInterval(interval);
+        } else {
+          setAmountSecondsPassed(secondsDifference);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [activeCycle, totalSeconds, activeCycleId]);
 
   useEffect(() => {
     if (activeCycle) {
       document.title = `${minutes}:${seconds}`;
     }
   }, [minutes, seconds, activeCycle]);
-
-  const task = watch("task");
-  const isSubmitDisabled = !task;
 
   return (
     <HomeRender>
