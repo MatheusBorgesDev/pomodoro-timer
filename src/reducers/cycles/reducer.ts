@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { ActionTypes } from "./actions";
 
 interface CyclesState {
