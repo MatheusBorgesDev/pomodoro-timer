@@ -1,30 +1,21 @@
-# React + TypeScript + Vite
+# Pomodoro Timer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Application created to set the time for a task and track its progress through history
 
-Currently, two official plugins are available:
+> The project aimed to improve knowledge about Context API, Reducers, React hooks, React Hook Form with Zod, React Router DOM, using React+Vite, Styled Components and TypeScript to build it.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![preview_1](./.github/preview_1.png)
+![preview_2](./.github/preview_2.png)
 
-## Expanding the ESLint configuration
+🔗 [Click here to access](https://matheusborgesdev.github.io/pomodoro-timer)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 💻 Technologies
 
-- Configure the top-level `parserOptions` property like this:
+- React+Vite
+- Typescript
+- Styled components
+- Figma
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## 📧 Contact
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+matheusb.dev@gmail.com
